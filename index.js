@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const databaseConfig = require("./config/database.config");
 const clientRoutes = require("./routes/client/index.route");
+const adminRoutes = require("./routes/admin/index.route");
 require("dotenv").config();
 const app = express();
 const port = 3000;
@@ -19,6 +20,7 @@ app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", clientRoutes);
+app.use("/admin", adminRoutes);
 
 app.listen(port, () => {
   console.log(`Website đang chạy ở cổng ${port}`);
