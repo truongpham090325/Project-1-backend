@@ -2,6 +2,7 @@ doctype html
 html
   head
     title #{pageTitle}
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css")
     link(rel="stylesheet" href="/client/assets/css/style.css")
   body
     include ../partials/header.pug
@@ -9,5 +10,7 @@ html
     block main
 
     include ../partials/footer.pug
+
+    include ../partials/box-contact.pug
 
     script(src="/client/assets/js/script.js")
