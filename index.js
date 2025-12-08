@@ -1,7 +1,8 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const Tour = require("./models/tour.model");
+const homeController = require("./controllers/client/home.controller");
+const tourController = require("./controllers/client/tour.controller");
 require("dotenv").config();
 const app = express();
 const port = 3000;
@@ -18,20 +19,9 @@ app.set("view engine", "pug");
 // Thiết lập thư mục chứa file tĩnh
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.render("client/pages/home", {
-    pageTitle: "Trang chủ",
-  });
-});
+app.get("/", homeController.home);
 
-app.get("/tours", async (req, res) => {
-  const tourList = await Tour.find({});
-
-  res.render("client/pages/tour-list", {
-    pageTitle: "Trang danh sách tour",
-    tourList: tourList,
-  });
-});
+app.get("/tours", tourController.list);
 
 app.listen(port, () => {
   console.log(`Website đang chạy ở cổng ${port}`);
