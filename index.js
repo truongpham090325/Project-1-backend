@@ -1,13 +1,13 @@
 const express = require("express");
 const path = require("path");
-const mongoose = require("mongoose");
+const databaseConfig = require("./config/database.config");
 const clientRoutes = require("./routes/client/index.route");
 require("dotenv").config();
 const app = express();
 const port = 3000;
 
 // Kết nối CSDL
-mongoose.connect(process.env.DATABASE);
+databaseConfig.connect();
 
 // Thiết lập thư mục view
 app.set("views", path.join(__dirname, "views"));
