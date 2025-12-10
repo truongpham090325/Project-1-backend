@@ -3,3 +3,9 @@ module.exports.list = (req, res) => {
     pageTitle: "Quản lý danh mục",
   });
 };
+
+module.exports.create = (req, res) => {
+  res.render("admin/pages/category-create", {
+    pageTitle: "Tạo danh mục",
+  });
+};
