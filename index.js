@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const databaseConfig = require("./config/database.config");
+const variableConfig = require("./config/variable.config");
 const clientRoutes = require("./routes/client/index.route");
 const adminRoutes = require("./routes/admin/index.route");
 require("dotenv").config();
@@ -19,8 +20,11 @@ app.set("view engine", "pug");
 // Thiết lập thư mục chứa file tĩnh
 app.use(express.static(path.join(__dirname, "public")));
 
+// Tạo biến toàn cục trong file PUG
+app.locals.pathAdmin = variableConfig.pathAdmin;
+
+app.use(`/${variableConfig.pathAdmin}`, adminRoutes);
 app.use("/", clientRoutes);
-app.use("/admin", adminRoutes);
 
 app.listen(port, () => {
   console.log(`Website đang chạy ở cổng ${port}`);
