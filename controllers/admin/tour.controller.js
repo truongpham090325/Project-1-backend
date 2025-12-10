@@ -3,3 +3,9 @@ module.exports.list = (req, res) => {
     pageTitle: "Quản lý tour",
   });
 };
+
+module.exports.create = (req, res) => {
+  res.render("admin/pages/tour-create", {
+    pageTitle: "Quản lý tour",
+  });
+};
