@@ -21,3 +21,9 @@ module.exports.otpPassword = (req, res) => {
     pageTitle: "Nhập mã OTP",
   });
 };
+
+module.exports.resetPassword = (req, res) => {
+  res.render("admin/pages/reset-password", {
+    pageTitle: "Đổi mật khẩu",
+  });
+};
