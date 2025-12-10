@@ -21,3 +21,15 @@ module.exports.accountAdminCreate = (req, res) => {
     pageTitle: "Tạo tài khoản quản trị",
   });
 };
+
+module.exports.roleList = (req, res) => {
+  res.render("admin/pages/setting-role-list", {
+    pageTitle: "Nhóm quyền",
+  });
+};
+
+module.exports.roleCreate = (req, res) => {
+  res.render("admin/pages/setting-role-create", {
+    pageTitle: "Tạo nhóm quyền",
+  });
+};
