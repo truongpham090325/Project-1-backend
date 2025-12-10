@@ -9,3 +9,15 @@ module.exports.websiteInfo = (req, res) => {
     pageTitle: "Thông tin website",
   });
 };
+
+module.exports.accountAdminList = (req, res) => {
+  res.render("admin/pages/setting-account-admin-list", {
+    pageTitle: "Tài khoản quản trị",
+  });
+};
+
+module.exports.accountAdminCreate = (req, res) => {
+  res.render("admin/pages/setting-account-admin-create", {
+    pageTitle: "Tạo tài khoản quản trị",
+  });
+};
