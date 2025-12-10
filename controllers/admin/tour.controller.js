@@ -6,6 +6,12 @@ module.exports.list = (req, res) => {
 
 module.exports.create = (req, res) => {
   res.render("admin/pages/tour-create", {
-    pageTitle: "Quản lý tour",
+    pageTitle: "Tạo tour",
+  });
+};
+
+module.exports.trash = (req, res) => {
+  res.render("admin/pages/tour-trash", {
+    pageTitle: "Thùng rác tour",
   });
 };
