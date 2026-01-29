@@ -6,7 +6,7 @@ const Tour = mongoose.model(
     name: String,
     vehicle: String,
   },
-  "tours"
+  "tours",
 );
 
 module.exports = Tour;
