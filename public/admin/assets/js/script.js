@@ -1,3 +1,36 @@
+// Notify
+var notify = new Notyf({
+  duration: 3000,
+  position: {
+    x: "right",
+    y: "top",
+  },
+  dismissible: true,
+});
+
+let existNotify = sessionStorage.getItem("notify");
+if (existNotify) {
+  existNotify = JSON.parse(existNotify);
+  if (existNotify.code == "error") {
+    notify.error(existNotify.message);
+  }
+  if (existNotify.code == "success") {
+    notify.success(existNotify.message);
+  }
+  sessionStorage.removeItem("notify");
+}
+
+const drawNotify = (code, message) => {
+  sessionStorage.setItem(
+    "notify",
+    JSON.stringify({
+      code: code,
+      message: message,
+    }),
+  );
+};
+// End Notify
+
 // Menu Mobile
 const buttonMenuMobile = document.querySelector(".header .inner-button-menu");
 if (buttonMenuMobile) {
@@ -52,7 +85,7 @@ if (scheduleSection8) {
     if (event.target.closest(".inner-remove")) {
       const parentItem = event.target.closest(".inner-schedule-item");
       const totalItem = listItem.querySelectorAll(
-        ".inner-schedule-item"
+        ".inner-schedule-item",
       ).length;
       if (parentItem && totalItem > 1) {
         parentItem.remove();
@@ -214,7 +247,7 @@ if (tourCreateForm) {
 
       // locations
       const listElementLocation = tourCreateForm.querySelectorAll(
-        'input[name="locations"]:checked'
+        'input[name="locations"]:checked',
       );
       listElementLocation.forEach((input) => {
         locations.push(input.value);
@@ -223,7 +256,7 @@ if (tourCreateForm) {
 
       // schedules
       const listElementScheduleItem = tourCreateForm.querySelectorAll(
-        ".inner-schedule-item"
+        ".inner-schedule-item",
       );
       listElementScheduleItem.forEach((scheduleItem) => {
         const input = scheduleItem.querySelector("input");
@@ -317,7 +350,7 @@ if (orderEditForm) {
 
 // Setting Website Info Form
 const settingWebsiteInfoForm = document.querySelector(
-  "#setting-website-info-form"
+  "#setting-website-info-form",
 );
 if (settingWebsiteInfoForm) {
   const validation = new JustValidate("#setting-website-info-form");
@@ -363,7 +396,7 @@ if (settingWebsiteInfoForm) {
 
 // Setting Account Admin Create Form
 const settingAccountAdminCreateForm = document.querySelector(
-  "#setting-account-admin-create-form"
+  "#setting-account-admin-create-form",
 );
 if (settingAccountAdminCreateForm) {
   const validation = new JustValidate("#setting-account-admin-create-form");
@@ -466,7 +499,7 @@ if (settingAccountAdminCreateForm) {
 
 // Setting Role Create Form
 const settingRoleCreateForm = document.querySelector(
-  "#setting-role-create-form"
+  "#setting-role-create-form",
 );
 if (settingRoleCreateForm) {
   const validation = new JustValidate("#setting-role-create-form");
@@ -485,7 +518,7 @@ if (settingRoleCreateForm) {
 
       // permissions
       const listElementPermission = settingRoleCreateForm.querySelectorAll(
-        'input[name="permissions"]:checked'
+        'input[name="permissions"]:checked',
       );
       listElementPermission.forEach((input) => {
         permissions.push(input.value);
@@ -562,7 +595,7 @@ if (profileEditForm) {
 
 // Profile Change Password Form
 const profileChangePasswordForm = document.querySelector(
-  "#profile-change-password-form"
+  "#profile-change-password-form",
 );
 if (profileChangePasswordForm) {
   const validation = new JustValidate("#profile-change-password-form");
