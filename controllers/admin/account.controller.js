@@ -33,9 +33,9 @@ module.exports.registerPost = async (req, res) => {
 
     req.body.status = "initial";
 
-    const newRecord = new AccountAdmin(req.body);
+    // const newRecord = new AccountAdmin(req.body);
 
-    await newRecord.save();
+    // await newRecord.save();
 
     res.json({
       code: "success",
