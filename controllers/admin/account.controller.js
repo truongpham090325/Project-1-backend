@@ -1,6 +1,9 @@
 const AccountAdmin = require("../../models/account-admin");
+const ForgotPassword = require("../../models/forgot-password.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { generateRandomNumber } = require("../../helpers/generate.helper");
+const mailHelper = require("../../helpers/mail.helper");
 
 module.exports.login = async (req, res) => {
   res.render("admin/pages/login", {
@@ -97,9 +100,9 @@ module.exports.registerPost = async (req, res) => {
 
     req.body.status = "initial";
 
-    // const newRecord = new AccountAdmin(req.body);
+    const newRecord = new AccountAdmin(req.body);
 
-    // await newRecord.save();
+    await newRecord.save();
 
     res.json({
       code: "success",
@@ -124,6 +127,63 @@ module.exports.forgotPassword = (req, res) => {
   res.render("admin/pages/forgot-password", {
     pageTitle: "Quên mật khẩu",
   });
+};
+
+module.exports.forgotPasswordPost = async (req, res) => {
+  try {
+    // Kiểm tra email có tồn tại hay không
+    const { email } = req.body;
+    const existAccount = await AccountAdmin.findOne({
+      email: email,
+    });
+    if (!existAccount) {
+      res.json({
+        code: "error",
+        message: "Email không tồn tại trong hệ thống!",
+      });
+      return;
+    }
+
+    // Kiểm tra xem đã tạo otp hay chưa để tránh tạo nhiều lần
+    const existOtp = await ForgotPassword.findOne({
+      email: email,
+    });
+
+    if (existOtp) {
+      res.json({
+        code: "error",
+        message: "Đã gửi mã OTP! Vui lòng gửi lại yêu cầu sau 5 phút!",
+      });
+      return;
+    }
+
+    // Tạo mã OTP
+    const otp = generateRandomNumber(6);
+
+    // Lưu vào CSDL: OTP và email
+    const newRecord = ForgotPassword({
+      email: email,
+      otp: otp,
+      expireAt: Date.now() + 5 * 60 * 1000, // Lưu trong 5 phút
+    });
+    await newRecord.save();
+
+    // Gửi mã OTP tự động qua email
+    const title = "Mã OTP lấy lại mật khẩu!";
+    const content = `Mã OTP của bạn là <b>${otp}</b>. Mã OTP có hiệu lực trong 5 phút. Vui lòng không cung cấp cho bất kỳ ai`;
+    mailHelper.sendMail(email, title, content);
+
+    res.json({
+      code: "success",
+      message: "Đã gửi mã OTP! Vui lòng kiểm tra email của bạn!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
 };
 
 module.exports.otpPassword = (req, res) => {
