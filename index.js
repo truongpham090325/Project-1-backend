@@ -4,6 +4,7 @@ const databaseConfig = require("./config/database.config");
 const variableConfig = require("./config/variable.config");
 const clientRoutes = require("./routes/client/index.route");
 const adminRoutes = require("./routes/admin/index.route");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const app = express();
 const port = 3000;
@@ -25,6 +26,12 @@ app.locals.pathAdmin = variableConfig.pathAdmin;
 
 // Cho phép gửi dữ liệu dạng json
 app.use(express.json());
+
+// Tạo biến toàn cục trong các file backend
+global.pathAdmin = variableConfig.pathAdmin;
+
+// Lấy được cookie
+app.use(cookieParser());
 
 app.use(`/${variableConfig.pathAdmin}`, adminRoutes);
 app.use("/", clientRoutes);
