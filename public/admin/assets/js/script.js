@@ -1,36 +1,3 @@
-// Notify
-var notify = new Notyf({
-  duration: 3000,
-  position: {
-    x: "right",
-    y: "top",
-  },
-  dismissible: true,
-});
-
-let existNotify = sessionStorage.getItem("notify");
-if (existNotify) {
-  existNotify = JSON.parse(existNotify);
-  if (existNotify.code == "error") {
-    notify.error(existNotify.message);
-  }
-  if (existNotify.code == "success") {
-    notify.success(existNotify.message);
-  }
-  sessionStorage.removeItem("notify");
-}
-
-const drawNotify = (code, message) => {
-  sessionStorage.setItem(
-    "notify",
-    JSON.stringify({
-      code: code,
-      message: message,
-    }),
-  );
-};
-// End Notify
-
 // Menu Mobile
 const buttonMenuMobile = document.querySelector(".header .inner-button-menu");
 if (buttonMenuMobile) {
@@ -666,3 +633,25 @@ if (sider) {
   });
 }
 // End sider
+
+// Button Logout
+const buttonLogout = document.querySelector(".sider [button-logout]");
+if (buttonLogout) {
+  buttonLogout.addEventListener("click", () => {
+    fetch(`/${pathAdmin}/account/logout`, {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code == "error") {
+          notify.error(data.code);
+        }
+
+        if (data.code == "success") {
+          drawNotify(data.code, data.message);
+          window.location.href = `/${pathAdmin}/account/login`;
+        }
+      });
+  });
+}
+// End Button Logout
