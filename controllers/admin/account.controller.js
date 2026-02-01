@@ -1,4 +1,4 @@
-const AccountAdmin = require("../../models/account-admin");
+const AccountAdmin = require("../../models/account-admin.model");
 const ForgotPassword = require("../../models/forgot-password.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
