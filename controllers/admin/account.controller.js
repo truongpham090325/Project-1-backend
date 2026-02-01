@@ -192,6 +192,57 @@ module.exports.otpPassword = (req, res) => {
   });
 };
 
+module.exports.otpPasswordPost = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const existOTP = await ForgotPassword.findOne({
+      otp: otp,
+      email: email,
+    });
+
+    if (!existOTP) {
+      res.json({
+        code: "error",
+        message: "Mã OTP không chính xác!",
+      });
+      return;
+    }
+
+    const existAccount = await AccountAdmin.findOne({
+      email: email,
+    });
+
+    const token = jwt.sign(
+      {
+        id: existAccount.id,
+        email: existAccount.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
+
+    res.cookie("token", token, {
+      maxAge: 24 * 60 * 60 * 1000, // 1 ngày
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+    res.json({
+      code: "success",
+      message: "Xác thực thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
+
 module.exports.resetPassword = (req, res) => {
   res.render("admin/pages/reset-password", {
     pageTitle: "Đổi mật khẩu",
