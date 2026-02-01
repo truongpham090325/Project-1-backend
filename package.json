@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
@@ -15,6 +16,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "8.18.2",
     "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^7.0.13",
     "nodemon": "^3.1.11",
     "pug": "^3.0.3"
