@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const accountController = require("../../controllers/admin/account.controller");
 const accountValidate = require("../../validates/admin/account.validate");
+const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
 router.get("/login", accountController.login);
 
@@ -31,6 +32,13 @@ router.post(
 );
 
 router.get("/reset-password", accountController.resetPassword);
+
+router.post(
+  "/reset-password",
+  authMiddleware.verifyToken,
+  accountValidate.resetPasswordPost,
+  accountController.resetPasswordPost,
+);
 
 router.get("/register-initial", accountController.registerInitial);
 

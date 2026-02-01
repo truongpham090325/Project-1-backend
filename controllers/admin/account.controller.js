@@ -249,6 +249,28 @@ module.exports.resetPassword = (req, res) => {
   });
 };
 
+module.exports.resetPasswordPost = async (req, res) => {
+  const { password } = req.body;
+
+  // Mã hóa mật khẩu
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(password, salt);
+
+  await AccountAdmin.updateOne(
+    {
+      _id: req.account.id,
+    },
+    {
+      password: hashPassword,
+    },
+  );
+
+  res.json({
+    code: "success",
+    message: "Đổi mật khẩu thành công!",
+  });
+};
+
 module.exports.logoutPost = (req, res) => {
   res.clearCookie("token");
   res.json({
