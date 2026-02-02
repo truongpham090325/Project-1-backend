@@ -85,8 +85,22 @@ if (listFilepondImage.length > 0) {
   listFilepondImage.forEach((filepondImage) => {
     FilePond.registerPlugin(FilePondPluginImagePreview);
     FilePond.registerPlugin(FilePondPluginFileValidateType);
+
+    let files = null;
+    const elementImageDefault = filepondImage.closest("[image-default]");
+    if (elementImageDefault) {
+      const imageDefault = elementImageDefault.getAttribute("image-default");
+      if (imageDefault) {
+        files = [
+          {
+            source: imageDefault,
+          },
+        ];
+      }
+    }
     filePond[filepondImage.name] = FilePond.create(filepondImage, {
       labelIdle: "+",
+      files: files,
     });
   });
 }
@@ -186,6 +200,58 @@ if (categoryCreateForm) {
           if (data.code == "success") {
             drawNotify(data.code, data.message);
             window.location.reload();
+          }
+        });
+    });
+}
+// End Category Create Form
+
+// Category Edit Form
+const categoryEditForm = document.querySelector("#category-edit-form");
+if (categoryEditForm) {
+  const validation = new JustValidate("#category-edit-form");
+
+  validation
+    .addField("#name", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên danh mục!",
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const name = event.target.name.value;
+      const parent = event.target.parent.value;
+      const position = event.target.position.value;
+      const status = event.target.status.value;
+      const avatars = filePond.avatar.getFiles();
+      let avatar = null;
+      if (avatars.length > 0) {
+        avatar = avatars[0].file;
+      }
+      const description = tinymce.get("description").getContent();
+
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("parent", parent);
+      formData.append("position", position);
+      formData.append("status", status);
+      formData.append("avatar", avatar);
+      formData.append("description", description);
+
+      fetch(`/${pathAdmin}/category/edit/${id}`, {
+        method: "PATCH",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notify.error(data.message);
+          }
+
+          if (data.code == "success") {
+            notify.success(data.message);
           }
         });
     });
