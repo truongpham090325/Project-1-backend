@@ -16,4 +16,4 @@ const buildCategoryTree = (categories, parentId = "") => {
   return tree;
 };
 
-module.exports.buildCategoryTree = buildCategoryTree;
+module.exports = buildCategoryTree;

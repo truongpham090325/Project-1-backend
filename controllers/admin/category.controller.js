@@ -13,7 +13,6 @@ module.exports.create = async (req, res) => {
   });
 
   const categoryTree = buildCategoryTree(categoryList);
-  console.log(categoryTree);
 
   res.render("admin/pages/category-create", {
     pageTitle: "Tạo danh mục",
