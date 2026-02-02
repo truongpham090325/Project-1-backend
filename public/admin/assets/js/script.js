@@ -184,9 +184,8 @@ if (categoryCreateForm) {
           }
 
           if (data.code == "success") {
-            notify.success(data.message);
-            // drawNotify(data.code, data.message);
-            // window.location.reload();
+            drawNotify(data.code, data.message);
+            window.location.reload();
           }
         });
     });
