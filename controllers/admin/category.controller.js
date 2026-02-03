@@ -4,9 +4,17 @@ const AccountAdmin = require("../../models/account-admin.model");
 const moment = require("moment");
 
 module.exports.list = async (req, res) => {
-  const categoryList = await Category.find({
+  const find = {
     deleted: false,
-  }).sort({
+  };
+
+  // Lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  // Hết Lọc theo trạng thái
+
+  const categoryList = await Category.find(find).sort({
     position: "desc",
   });
 
