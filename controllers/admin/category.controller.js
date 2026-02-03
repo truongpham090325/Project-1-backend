@@ -20,6 +20,23 @@ module.exports.list = async (req, res) => {
   }
   // Hết Lọc theo người tạo
 
+  // Lọc theo ngày tạo
+  let filterDate = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).toDate();
+    filterDate.$gte = startDate;
+  }
+
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).toDate();
+    filterDate.$lte = endDate;
+  }
+
+  if (Object.keys(filterDate).length > 0) {
+    find.createdAt = filterDate;
+  }
+  // Hết Lọc theo ngày tạo
+
   const categoryList = await Category.find(find).sort({
     position: "desc",
   });
