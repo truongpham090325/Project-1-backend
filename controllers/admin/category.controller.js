@@ -213,3 +213,51 @@ module.exports.deletePatch = async (req, res) => {
     });
   }
 };
+
+module.exports.changeMultiPatch = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "active":
+      case "inactive":
+        await Category.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            status: option,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Cập nhập trạng thái thành công!",
+        });
+        break;
+      case "delete":
+        await Category.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: true,
+            deletedAt: Date.now(),
+            deletedBy: req.account.id,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Xóa danh mục thành công!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
