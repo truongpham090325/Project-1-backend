@@ -2,10 +2,44 @@ const buildCategoryTree = require("../../helpers/category.helper");
 const Category = require("../../models/category-model");
 const City = require("../../models/city.model");
 const Tour = require("../../models/tour.model");
+const AccountAdmin = require("../../models/account-admin.model");
+const moment = require("moment");
 
-module.exports.list = (req, res) => {
+module.exports.list = async (req, res) => {
+  // Danh sách tour
+  const tourList = await Tour.find({
+    deleted: false,
+  });
+  // Hết Danh sách tour
+
+  for (const item of tourList) {
+    if (item.createdBy) {
+      const infoAccount = await AccountAdmin.findOne({
+        _id: item.createdBy,
+      });
+
+      if (infoAccount) {
+        item.createdByFullName = infoAccount.fullName;
+      }
+    }
+
+    if (item.updatedBy) {
+      const infoAccount = await AccountAdmin.findOne({
+        _id: item.updatedBy,
+      });
+
+      if (infoAccount) {
+        item.updatedByFullName = infoAccount.fullName;
+      }
+    }
+
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
+  }
+
   res.render("admin/pages/tour-list", {
     pageTitle: "Quản lý tour",
+    tourList: tourList,
   });
 };
 
