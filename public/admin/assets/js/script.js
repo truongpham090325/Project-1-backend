@@ -891,6 +891,32 @@ if (listButtonDelete.length > 0) {
 }
 // End Button delete
 
+// Button undo
+const listButtonUndo = document.querySelectorAll("[button-undo]");
+if (listButtonUndo.length > 0) {
+  listButtonUndo.forEach((button) => {
+    button.addEventListener("click", () => {
+      const dataApi = button.getAttribute("data-api");
+
+      fetch(dataApi, {
+        method: "PATCH",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notify.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
+    });
+  });
+}
+// End Button undo
+
 // Fiter Status
 const filterStatus = document.querySelector("[filter-status]");
 if (filterStatus) {

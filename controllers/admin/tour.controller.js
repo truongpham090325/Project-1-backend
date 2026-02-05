@@ -266,8 +266,66 @@ module.exports.deletePatch = async (req, res) => {
   }
 };
 
-module.exports.trash = (req, res) => {
+module.exports.trash = async (req, res) => {
+  // Danh sách tour đã xóa
+  const tourList = await Tour.find({
+    deleted: true,
+  });
+  // Hết Danh sách tour đã xóa
+
+  for (const item of tourList) {
+    if (item.createdBy) {
+      const infoAccount = await AccountAdmin.findOne({
+        _id: item.createdBy,
+      });
+
+      if (infoAccount) {
+        item.createdByFullName = infoAccount.fullName;
+      }
+    }
+
+    if (item.updatedBy) {
+      const infoAccount = await AccountAdmin.findOne({
+        _id: item.updatedBy,
+      });
+
+      if (infoAccount) {
+        item.updatedByFullName = infoAccount.fullName;
+      }
+    }
+
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
+  }
+
   res.render("admin/pages/tour-trash", {
     pageTitle: "Thùng rác tour",
+    tourList: tourList,
   });
+};
+
+module.exports.undoPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Tour.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục tour thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
 };
