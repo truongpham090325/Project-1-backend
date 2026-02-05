@@ -917,6 +917,45 @@ if (listButtonUndo.length > 0) {
 }
 // End Button undo
 
+// Button destroy
+const listButtonDestroy = document.querySelectorAll("[button-destroy]");
+if (listButtonDestroy.length > 0) {
+  listButtonDestroy.forEach((button) => {
+    button.addEventListener("click", () => {
+      const dataApi = button.getAttribute("data-api");
+
+      Swal.fire({
+        title: "Bạn có chắc muốn xóa?",
+        text: "Hành động không thể khôi phục!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "green",
+        confirmButtonText: "Đồng ý",
+        cancelButtonText: "Hủy bỏ",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(dataApi, {
+            method: "DELETE",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.code == "error") {
+                notify.error(data.message);
+              }
+
+              if (data.code == "success") {
+                drawNotify(data.code, data.message);
+                window.location.reload();
+              }
+            });
+        }
+      });
+    });
+  });
+}
+// End Button destroy
+
 // Fiter Status
 const filterStatus = document.querySelector("[filter-status]");
 if (filterStatus) {

@@ -17,6 +17,8 @@ block main
       .inner-search
         <i class="fa-solid fa-magnifying-glass"></i>
         input(type="text" placeholder="Tìm kiếm")
+      .inner-button-create
+        a(href=`/${pathAdmin}/tour/list`) Quay lại danh sách
   //- End Section 5
 
   //- Section 6
@@ -75,7 +77,7 @@ block main
                   button(
                     class="inner-delete"
                     button-destroy
-                    data-api = `/${pathAdmin}/tour/destrory/${item.id}`
+                    data-api = `/${pathAdmin}/tour/destroy/${item.id}`
                     ) <i class="fa-regular fa-trash-can"></i>
   //- End Section 6
 

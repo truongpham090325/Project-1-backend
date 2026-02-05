@@ -329,3 +329,24 @@ module.exports.undoPatch = async (req, res) => {
     });
   }
 };
+
+module.exports.destroyDelete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Tour.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa tour vĩnh viễn!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
