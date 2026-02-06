@@ -4,6 +4,7 @@ const City = require("../../models/city.model");
 const Tour = require("../../models/tour.model");
 const AccountAdmin = require("../../models/account-admin.model");
 const moment = require("moment");
+const slugify = require("slugify");
 
 module.exports.list = async (req, res) => {
   const find = {
@@ -56,6 +57,14 @@ module.exports.list = async (req, res) => {
     find.priceNewAdult = filterPrice;
   }
   // Hết Lọc theo mức giá
+
+  // Tìm kiếm tour
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword);
+    const keywordRegex = new RegExp(keyword, "i");
+    find.slug = keywordRegex;
+  }
+  // Hết Tìm kiếm tour
 
   // Danh sách tài khoản quản trị
   const accountAdminList = await AccountAdmin.find({});
@@ -331,10 +340,20 @@ module.exports.deletePatch = async (req, res) => {
 };
 
 module.exports.trash = async (req, res) => {
-  // Danh sách tour đã xóa
-  const tourList = await Tour.find({
+  const find = {
     deleted: true,
-  });
+  };
+
+  // Tìm kiếm tour
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword);
+    const keywordRegex = new RegExp(keyword, "i");
+    find.slug = keywordRegex;
+  }
+  // Hết Tìm kiếm tour
+
+  // Danh sách tour đã xóa
+  const tourList = await Tour.find(find);
   // Hết Danh sách tour đã xóa
 
   for (const item of tourList) {
@@ -411,6 +430,94 @@ module.exports.destroyDelete = async (req, res) => {
     res.json({
       code: "error",
       message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+module.exports.changeMultiPatch = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+    switch (option) {
+      case "active":
+      case "inactive":
+        await Tour.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            status: option,
+          },
+        );
+
+        res.json({
+          code: "success",
+          message: "Đã cập nhập trạng thái!",
+        });
+        break;
+      case "delete":
+        await Tour.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: true,
+          },
+        );
+
+        res.json({
+          code: "success",
+          message: "Đã xóa tour!",
+        });
+        break;
+      case "undo":
+        await Tour.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: false,
+          },
+        );
+
+        res.json({
+          code: "success",
+          message: "Đã khôi phục tour!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.changeMultiDelete = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+    switch (option) {
+      case "destroy":
+        await Tour.deleteMany({
+          _id: { $in: ids },
+        });
+
+        res.json({
+          code: "success",
+          message: "Đã xóa vĩnh viễn tour!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
     });
   }
 };

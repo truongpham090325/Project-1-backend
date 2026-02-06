@@ -1145,18 +1145,46 @@ if (changeMulti) {
       ids: ids,
     };
 
-    fetch(dataApi, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataFinal),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        drawNotify(data.code, data.message);
-        window.location.reload();
+    if (option === "destroy") {
+      Swal.fire({
+        title: "Bạn có chắc muốn xóa?",
+        text: "Hành động không thể khôi phục!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "green",
+        confirmButtonText: "Đồng ý",
+        cancelButtonText: "Hủy bỏ",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(dataApi, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dataFinal),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              drawNotify(data.code, data.message);
+              window.location.reload();
+            });
+        }
       });
+    } else {
+      fetch(dataApi, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataFinal),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          drawNotify(data.code, data.message);
+          window.location.reload();
+        });
+    }
   });
 }
 // End Change Multi
