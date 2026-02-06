@@ -347,21 +347,21 @@ if (tourCreateForm) {
       formData.append("information", information);
       formData.append("schedules", JSON.stringify(schedules));
 
-      // fetch(`/${pathAdmin}/tour/create`, {
-      //   method: "POST",
-      //   body: formData,
-      // })
-      //   .then((res) => res.json())
-      //   .then((data) => {
-      //     if (data.code == "error") {
-      //       notify.error(data.message);
-      //     }
+      fetch(`/${pathAdmin}/tour/create`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notify.error(data.message);
+          }
 
-      //     if (data.code == "success") {
-      //       drawNotify(data.code, data.message);
-      //       window.location.reload();
-      //     }
-      //   });
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
     });
 }
 // End Tour Create Form
@@ -1051,6 +1051,53 @@ if (filterEndDate) {
   }
 }
 // End Fiter end date
+
+// Fiter By Category
+const filterByCategory = document.querySelector("[filter-by-category]");
+if (filterByCategory) {
+  const url = new URL(window.location.href);
+
+  filterByCategory.addEventListener("change", () => {
+    const value = filterByCategory.value;
+
+    if (value) {
+      url.searchParams.set("category", value);
+    } else {
+      url.searchParams.delete("category");
+    }
+    window.location.href = url.href;
+  });
+
+  // Hiện thị lựa chọn mặc định
+  const valueCurrent = url.searchParams.get("category");
+  if (valueCurrent) {
+    filterByCategory.value = valueCurrent;
+  }
+}
+// End Fiter By Category
+
+// Filter price
+const filterPrice = document.querySelector("[filter-price]");
+if (filterPrice) {
+  const url = new URL(window.location.href);
+
+  filterPrice.addEventListener("change", () => {
+    const value = filterPrice.value;
+    if (value) {
+      url.searchParams.set("price", value);
+    } else {
+      url.searchParams.delete("price");
+    }
+    window.location.href = url.href;
+  });
+
+  // Hiện thị lựa chọn mặc định
+  const valueCurrent = url.searchParams.get("price");
+  if (valueCurrent) {
+    filterPrice.value = valueCurrent;
+  }
+}
+// End Filter price
 
 // Filter Reset
 const filterReset = document.querySelector("[filter-reset]");

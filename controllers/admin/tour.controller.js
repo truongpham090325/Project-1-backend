@@ -6,9 +6,71 @@ const AccountAdmin = require("../../models/account-admin.model");
 const moment = require("moment");
 
 module.exports.list = async (req, res) => {
-  // Danh sách tour
-  const tourList = await Tour.find({
+  const find = {
     deleted: false,
+  };
+
+  // Lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  // Hết Lọc theo trạng thái
+
+  // Lọc theo người tạo
+  if (req.query.createdBy) {
+    find.createdBy = req.query.createdBy;
+  }
+  // Hêt Lọc theo người tạo
+
+  // Lọc theo ngày
+  let filterDate = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).toDate();
+    filterDate.$gte = startDate;
+  }
+
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).toDate();
+    filterDate.$lte = endDate;
+  }
+
+  if (Object.keys(filterDate).length > 0) {
+    find.createdAt = filterDate;
+  }
+  // Hết Lọc theo ngày
+
+  // Lọc theo danh mục
+  if (req.query.category) {
+    find.category = req.query.category;
+  }
+  // Hết Lọc theo danh mục
+
+  // Lọc theo mức giá
+  if (req.query.price) {
+    const price = req.query.price.split("-");
+    const [priceMin, priceMax] = price;
+
+    let filterPrice = {};
+    filterPrice.$gte = parseInt(priceMin);
+    filterPrice.$lte = parseInt(priceMax);
+    find.priceNewAdult = filterPrice;
+  }
+  // Hết Lọc theo mức giá
+
+  // Danh sách tài khoản quản trị
+  const accountAdminList = await AccountAdmin.find({});
+  // Hết Danh sách tài khoản quản trị
+
+  // Danh sách danh mục
+  const categoryList = await Category.find({
+    deleted: false,
+  });
+  const categoryTree = buildCategoryTree(categoryList, "");
+  // Hết Danh sách danh mục
+
+  // Danh sách tour
+  const tourList = await Tour.find(find).sort({
+    createdAt: "desc",
   });
   // Hết Danh sách tour
 
@@ -40,6 +102,8 @@ module.exports.list = async (req, res) => {
   res.render("admin/pages/tour-list", {
     pageTitle: "Quản lý tour",
     tourList: tourList,
+    accountAdminList: accountAdminList,
+    categoryList: categoryTree,
   });
 };
 
