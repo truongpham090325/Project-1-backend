@@ -66,6 +66,24 @@ module.exports.list = async (req, res) => {
   }
   // Hết Tìm kiếm tour
 
+  // Phân trang
+  const limitItems = 4;
+  let page = 1;
+  if (req.query.page && parseInt(req.query.page) > 0) {
+    page = parseInt(req.query.page);
+  }
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await Tour.countDocuments({
+    deleted: false,
+  });
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+  };
+  // Hết Phân trang
+
   // Danh sách tài khoản quản trị
   const accountAdminList = await AccountAdmin.find({});
   // Hết Danh sách tài khoản quản trị
@@ -78,9 +96,12 @@ module.exports.list = async (req, res) => {
   // Hết Danh sách danh mục
 
   // Danh sách tour
-  const tourList = await Tour.find(find).sort({
-    createdAt: "desc",
-  });
+  const tourList = await Tour.find(find)
+    .sort({
+      createdAt: "desc",
+    })
+    .limit(limitItems)
+    .skip(skip);
   // Hết Danh sách tour
 
   for (const item of tourList) {
@@ -113,6 +134,7 @@ module.exports.list = async (req, res) => {
     tourList: tourList,
     accountAdminList: accountAdminList,
     categoryList: categoryTree,
+    pagination: pagination,
   });
 };
 
@@ -352,8 +374,26 @@ module.exports.trash = async (req, res) => {
   }
   // Hết Tìm kiếm tour
 
+  // Phân trang
+  const limitItems = 4;
+  let page = 1;
+  if (req.query.page && parseInt(req.query.page) > 0) {
+    page = parseInt(req.query.page);
+  }
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await Tour.countDocuments({
+    deleted: true,
+  });
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+  };
+  // Hết Phân trang
+
   // Danh sách tour đã xóa
-  const tourList = await Tour.find(find);
+  const tourList = await Tour.find(find).limit(limitItems).skip(skip);
   // Hết Danh sách tour đã xóa
 
   for (const item of tourList) {
@@ -384,6 +424,7 @@ module.exports.trash = async (req, res) => {
   res.render("admin/pages/tour-trash", {
     pageTitle: "Thùng rác tour",
     tourList: tourList,
+    pagination: pagination,
   });
 };
 
