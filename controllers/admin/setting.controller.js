@@ -167,3 +167,29 @@ module.exports.roleEditPatch = async (req, res) => {
     });
   }
 };
+
+module.exports.roleDeletePatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Role.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa nhóm quyền thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Không thể xóa nhóm quyền này!",
+    });
+  }
+};

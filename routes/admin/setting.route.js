@@ -42,4 +42,6 @@ router.patch(
   settingController.roleEditPatch,
 );
 
+router.patch("/role/delete/:id", settingController.roleDeletePatch);
+
 module.exports = router;
