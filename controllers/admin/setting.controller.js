@@ -1,4 +1,4 @@
-const { permissionList } = require("../../config/variable.config");
+const { permissionList, pathAdmin } = require("../../config/variable.config");
 const Role = require("../../models/role.model");
 const SettingWebsiteInfo = require("../../models/setting-webiste.info.model");
 
@@ -106,6 +106,58 @@ module.exports.roleCreatePost = async (req, res) => {
     res.json({
       code: "success",
       message: "Tạo nhóm quyền thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
+
+module.exports.roleEdit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const roleDetail = await Role.findOne({
+      _id: id,
+    });
+
+    if (!roleDetail) {
+      res.redirect(`/${pathAdmin}/setting/role/list`);
+      return;
+    }
+
+    res.render("admin/pages/setting-role-edit", {
+      pageTitle: "Chỉnh sửa nhóm quyền",
+      permissionList: permissionList,
+      roleDetail: roleDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/setting/role/list`);
+  }
+};
+
+module.exports.roleEditPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+    req.body.permissions = req.body.permissions
+      ? JSON.parse(req.body.permissions)
+      : [];
+
+    req.body.updatedBy = req.account.id;
+
+    await Role.updateOne(
+      {
+        _id: id,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập nhóm quyền thành công!",
     });
   } catch (error) {
     console.log(error);

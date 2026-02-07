@@ -34,4 +34,12 @@ router.post(
   settingController.roleCreatePost,
 );
 
+router.get("/role/edit/:id", settingController.roleEdit);
+
+router.patch(
+  "/role/edit/:id",
+  settingValidate.roleCreatePost,
+  settingController.roleEditPatch,
+);
+
 module.exports = router;
