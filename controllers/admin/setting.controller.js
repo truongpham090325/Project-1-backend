@@ -71,9 +71,16 @@ module.exports.accountAdminCreate = (req, res) => {
   });
 };
 
-module.exports.roleList = (req, res) => {
+module.exports.roleList = async (req, res) => {
+  const roleList = await Role.find({
+    deleted: false,
+  }).sort({
+    createdAt: "desc",
+  });
+
   res.render("admin/pages/setting-role-list", {
     pageTitle: "Nhóm quyền",
+    roleList: roleList,
   });
 };
 
