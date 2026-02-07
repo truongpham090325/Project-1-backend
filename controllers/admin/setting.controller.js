@@ -219,6 +219,32 @@ module.exports.accountAdminEditPatch = async (req, res) => {
   }
 };
 
+module.exports.accountAdminDeletePatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await AccountAdmin.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa tài khoản thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Không thể xóa nhóm quyền này!",
+    });
+  }
+};
+
 module.exports.roleList = async (req, res) => {
   const roleList = await Role.find({
     deleted: false,

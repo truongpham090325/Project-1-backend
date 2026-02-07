@@ -40,6 +40,11 @@ router.patch(
   settingController.accountAdminEditPatch,
 );
 
+router.patch(
+  "/account-admin/delete/:id",
+  settingController.accountAdminDeletePatch,
+);
+
 router.get("/role/list", settingController.roleList);
 
 router.get("/role/create", settingController.roleCreate);
