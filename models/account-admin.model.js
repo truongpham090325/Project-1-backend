@@ -1,14 +1,29 @@
 const mongoose = require("mongoose");
 
-const AccountAdmin = mongoose.model(
-  "AccountAdmin",
+const schema = new mongoose.Schema(
   {
     fullName: String,
     email: String,
+    phone: String,
+    role: String,
+    positionCompany: String,
+    avatar: String,
     password: String,
     status: String, // initial: Khởi tạo, active: Hoạt động, inactive: Tạm dừng
+    createdBy: String,
+    updatedBy: String,
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedBy: String,
+    deletedAt: Date,
   },
-  "accounts-admin",
+  {
+    timestamps: true, // Tự động sinh ra trường createdAt và updatedAt
+  },
 );
+
+const AccountAdmin = mongoose.model("AccountAdmin", schema, "accounts-admin");
 
 module.exports = AccountAdmin;

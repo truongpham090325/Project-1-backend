@@ -24,6 +24,13 @@ router.get("/account-admin/list", settingController.accountAdminList);
 
 router.get("/account-admin/create", settingController.accountAdminCreate);
 
+router.post(
+  "/account-admin/create",
+  upload.single("avatar"),
+  settingValidate.accountAdminCreatePost,
+  settingController.accountAdminCreatePost,
+);
+
 router.get("/role/list", settingController.roleList);
 
 router.get("/role/create", settingController.roleCreate);
