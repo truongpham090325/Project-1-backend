@@ -61,9 +61,26 @@ module.exports.websiteInfoPost = async (req, res) => {
   }
 };
 
-module.exports.accountAdminList = (req, res) => {
+module.exports.accountAdminList = async (req, res) => {
+  const listAccountAdmin = await AccountAdmin.find({
+    deleted: "false",
+  });
+
+  for (const item of listAccountAdmin) {
+    if (item.role) {
+      const roleInfo = await Role.findOne({
+        _id: item.role,
+      });
+
+      if (roleInfo) {
+        item.roleName = roleInfo.name;
+      }
+    }
+  }
+
   res.render("admin/pages/setting-account-admin-list", {
     pageTitle: "Tài khoản quản trị",
+    listAccountAdmin: listAccountAdmin,
   });
 };
 
