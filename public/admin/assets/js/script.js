@@ -709,6 +709,127 @@ if (settingAccountAdminCreateForm) {
 }
 // End Setting Account Admin Create Form
 
+// Setting Account Admin Create Form
+const settingAccountAdminEditForm = document.querySelector(
+  "#setting-account-admin-edit-form",
+);
+if (settingAccountAdminEditForm) {
+  const validation = new JustValidate("#setting-account-admin-edit-form");
+
+  validation
+    .addField("#fullName", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập họ tên!",
+      },
+      {
+        rule: "minLength",
+        value: 5,
+        errorMessage: "Họ tên phải có ít nhất 5 ký tự!",
+      },
+      {
+        rule: "maxLength",
+        value: 50,
+        errorMessage: "Họ tên không được vượt quá 50 ký tự!",
+      },
+    ])
+    .addField("#email", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập email!",
+      },
+      {
+        rule: "email",
+        errorMessage: "Email không đúng định dạng!",
+      },
+    ])
+    .addField("#phone", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập số điện thoại!",
+      },
+      {
+        rule: "customRegexp",
+        value: /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
+        errorMessage: "Số điện thoại không đúng định dạng!",
+      },
+    ])
+    .addField("#positionCompany", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập chức vụ!",
+      },
+    ])
+    .addField("#password", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập mật khẩu!",
+      },
+      {
+        validator: (value) => value.length >= 8,
+        errorMessage: "Mật khẩu phải chứa ít nhất 8 ký tự!",
+      },
+      {
+        validator: (value) => /[A-Z]/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ cái in hoa!",
+      },
+      {
+        validator: (value) => /[a-z]/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ cái thường!",
+      },
+      {
+        validator: (value) => /\d/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ số!",
+      },
+      {
+        validator: (value) => /[@$!%*?&]/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt!",
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const fullName = event.target.fullName.value;
+      const email = event.target.email.value;
+      const phone = event.target.phone.value;
+      const role = event.target.role.value;
+      const positionCompany = event.target.positionCompany.value;
+      const status = event.target.status.value;
+      const password = event.target.password.value;
+      const avatars = filePond.avatar.getFiles();
+      let avatar = null;
+      if (avatars.length > 0) {
+        avatar = avatars[0].file;
+      }
+
+      // Tạo Form data
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("role", role);
+      formData.append("positionCompany", positionCompany);
+      formData.append("status", status);
+      formData.append("password", password);
+      formData.append("avatar", avatar);
+
+      fetch(`/${pathAdmin}/setting/account-admin/edit/${id}`, {
+        method: "PATCH",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notify.error(data.message);
+          }
+
+          if (data.code == "success") {
+            notify.success(data.message);
+          }
+        });
+    });
+}
+// End Setting Account Admin Edit Form
+
 // Setting Role Create Form
 const settingRoleCreateForm = document.querySelector(
   "#setting-role-create-form",

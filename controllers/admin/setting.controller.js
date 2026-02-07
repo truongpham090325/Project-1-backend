@@ -136,6 +136,89 @@ module.exports.accountAdminCreatePost = async (req, res) => {
   }
 };
 
+module.exports.accountAdminEdit = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const accountAdminDetail = await AccountAdmin.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!accountAdminDetail) {
+      res.redirect(`/${pathAdmin}/setting/account-admin/list`);
+      return;
+    }
+
+    const roleList = await Role.find({
+      deleted: false,
+    });
+
+    res.render("admin/pages/setting-account-admin-edit", {
+      pageTitle: "Chỉnh sửa tài khoản quản trị",
+      roleList: roleList,
+      accountAdminDetail: accountAdminDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/setting/account-admin/list`);
+  }
+};
+
+module.exports.accountAdminEditPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const existEmail = await AccountAdmin.findOne({
+      _id: { $ne: id }, // not equal
+      email: req.body.email,
+    });
+
+    if (existEmail) {
+      res.json({
+        code: "error",
+        message: "Email đã tồn tại trong hệ thống!",
+      });
+      return;
+    }
+
+    // Mã hóa mật
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      req.body.password = await bcrypt.hash(req.body.password, salt);
+    } else {
+      delete req.body.password;
+    }
+
+    if (req.file) {
+      req.body.avatar = req.file.path;
+    } else {
+      delete req.body.avatar;
+    }
+
+    req.body.updatedBy = req.account.id;
+
+    await AccountAdmin.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập tài khoản thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
+
 module.exports.roleList = async (req, res) => {
   const roleList = await Role.find({
     deleted: false,
