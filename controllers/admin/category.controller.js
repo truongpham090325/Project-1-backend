@@ -281,6 +281,20 @@ module.exports.changeMultiPatch = async (req, res) => {
           message: "Xóa danh mục thành công!",
         });
         break;
+      case "undo":
+        await Category.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: false,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Khôi phục danh mục thành công!",
+        });
+        break;
       default:
         break;
     }
@@ -289,6 +303,182 @@ module.exports.changeMultiPatch = async (req, res) => {
     res.json({
       code: "error",
       message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.changeMultiDelete = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "destroy":
+        await Category.deleteMany({
+          _id: { $in: ids },
+        });
+
+        res.json({
+          code: "success",
+          message: "Đã xóa vĩnh viễn danh mục!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.trash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+
+  // Lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  // Hết Lọc theo trạng thái
+
+  // Lọc theo người tạo
+  if (req.query.createdBy) {
+    find.createdBy = req.query.createdBy;
+  }
+  // Hết Lọc theo người tạo
+
+  // Lọc theo ngày tạo
+  let filterDate = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).toDate();
+    filterDate.$gte = startDate;
+  }
+
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).toDate();
+    filterDate.$lte = endDate;
+  }
+
+  if (Object.keys(filterDate).length > 0) {
+    find.createdAt = filterDate;
+  }
+  // Hết Lọc theo ngày tạo
+
+  // Tìm kiếm
+  if (req.query.keyword) {
+    const keyword = slugify(req.query.keyword);
+    const keywordRegex = new RegExp(keyword, "i");
+    find.slug = keywordRegex;
+  }
+  // Hết Tìm kiếm
+
+  // Phân trang
+  const limitItems = 4;
+  let page = 1;
+  if (req.query.page && parseInt(req.query.page) > 0) {
+    page = parseInt(req.query.page);
+  }
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await Category.countDocuments({
+    deleted: true,
+  });
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+  // Hết Phân trang
+
+  const categoryList = await Category.find(find)
+    .sort({
+      position: "desc",
+    })
+    .limit(limitItems)
+    .skip(skip);
+
+  for (const item of categoryList) {
+    if (item.createdBy) {
+      const infoAccount = await AccountAdmin.findOne({
+        _id: item.createdBy,
+      });
+      if (infoAccount) {
+        item.createdByFullName = infoAccount.fullName;
+      }
+    }
+
+    if (item.updatedBy) {
+      const infoAccount = await AccountAdmin.findOne({
+        _id: item.updatedBy,
+      });
+      if (infoAccount) {
+        item.updatedByFullName = infoAccount.fullName;
+      }
+    }
+
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
+  }
+
+  // Danh sách tài khoản quản trị
+  const accountAdminList = await AccountAdmin.find({});
+  // Hết Danh sách tài khoản quản trị
+
+  res.render("admin/pages/category-trash", {
+    pageTitle: "Thùng rác danh mục",
+    categoryList: categoryList,
+    accountAdminList: accountAdminList,
+    pagination: pagination,
+  });
+};
+
+module.exports.undoPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Category.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục danh mục thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+module.exports.destroyDelete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Category.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa danh mục vĩnh viễn!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
     });
   }
 };

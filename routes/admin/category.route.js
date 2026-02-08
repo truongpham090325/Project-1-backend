@@ -30,4 +30,12 @@ router.patch("/delete/:id", categoryController.deletePatch);
 
 router.patch("/change-multi", categoryController.changeMultiPatch);
 
+router.delete("/change-multi", categoryController.changeMultiDelete);
+
+router.get("/trash", categoryController.trash);
+
+router.patch("/undo/:id", categoryController.undoPatch);
+
+router.delete("/destroy/:id", categoryController.destroyDelete);
+
 module.exports = router;
