@@ -534,9 +534,18 @@ module.exports.accountAdminDestroyDelete = async (req, res) => {
 };
 
 module.exports.roleList = async (req, res) => {
-  const roleList = await Role.find({
+  const find = {
     deleted: false,
-  }).sort({
+  };
+
+  // Tìm kiếm
+  if (req.query.keyword) {
+    const keywordRegex = new RegExp(req.query.keyword, "i");
+    find.name = keywordRegex;
+  }
+  // Hết Tìm kiếm
+
+  const roleList = await Role.find(find).sort({
     createdAt: "desc",
   });
 
@@ -652,6 +661,146 @@ module.exports.roleDeletePatch = async (req, res) => {
     res.json({
       code: "error",
       message: "Không thể xóa nhóm quyền này!",
+    });
+  }
+};
+
+module.exports.roleChangeMultiPatch = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "delete":
+        await Role.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: true,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Xóa quyền thành công!!",
+        });
+        break;
+      case "undo":
+        await Role.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: false,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Khôi phục quyền thành công!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.roleChangeMultiDelete = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "destroy":
+        await Role.deleteMany({
+          _id: { $in: ids },
+        });
+        res.json({
+          code: "success",
+          message: "Xóa quyền vĩnh viễn thành công!!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.roleTrash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+
+  // Tìm kiếm
+  if (req.query.keyword) {
+    const keywordRegex = new RegExp(req.query.keyword, "i");
+    find.name = keywordRegex;
+  }
+  // Hết Tìm kiếm
+
+  const roleList = await Role.find(find).sort({
+    createdAt: "desc",
+  });
+
+  res.render("admin/pages/setting-role-trash", {
+    pageTitle: "Thùng rác nhóm quyền",
+    roleList: roleList,
+  });
+};
+
+module.exports.roleUndoPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Role.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục quyền thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+module.exports.roleDestroyDelete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await Role.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa quyền vĩnh viễn!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
     });
   }
 };

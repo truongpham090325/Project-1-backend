@@ -1500,6 +1500,12 @@ if (search) {
       window.location.href = url.href;
     }
   });
+
+  // Hiển thị giá trị mặc định
+  const valueCurrent = url.searchParams.get("keyword");
+  if (valueCurrent) {
+    search.value = valueCurrent;
+  }
 }
 // End Search
 

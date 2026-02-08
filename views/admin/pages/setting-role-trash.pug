@@ -1,7 +1,7 @@
 extends ../layouts/default.pug
 
 block main
-  h1.box-title Nhóm quyền
+  h1.box-title Thùng rác nhóm quyền
 
   //- Section 5
   .section-5
@@ -10,16 +10,15 @@ block main
         .inner-item
           select
             option(value="") -- Hành động --
-            option(value="delete") Xóa
+            option(value="undo") Khôi phục
+            option(value="destroy") Xóa vĩnh viễn
         .inner-item
           button Áp dụng
       .inner-search
         <i class="fa-solid fa-magnifying-glass"></i>
         input(type="text" placeholder="Tìm kiếm" search)
       .inner-button-create
-        a(href=`/${pathAdmin}/setting/role/create`) + Tạo mới
-      .inner-button-trash
-        a(href=`/${pathAdmin}/setting/role/trash`) Thùng rác
+        a(href=`/${pathAdmin}/setting/role/list`) Quay lại danh sách
   //- End Section 5
 
   //- Section 6
@@ -42,13 +41,14 @@ block main
               td #{item.description}
               td
                 .inner-buttons
-                  a(
-                    class="inner-edit"
-                    href=`/${pathAdmin}/setting/role/edit/${item.id}`
-                    ) <i class="fa-regular fa-pen-to-square"></i>
+                  button(
+                    class="inner-undo"
+                    button-undo
+                    data-api=`/${pathAdmin}/setting/role/undo/${item.id}`
+                    ) <i class="fa-solid fa-rotate-left"></i>
                   button(
                     class="inner-delete"
-                    button-delete
-                    data-api=`/${pathAdmin}/setting/role/delete/${item.id}`
+                    button-destroy
+                    data-api=`/${pathAdmin}/setting/role/destroy/${item.id}`
                     ) <i class="fa-regular fa-trash-can"></i>
   //- End Section 6

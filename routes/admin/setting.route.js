@@ -87,4 +87,14 @@ router.patch(
 
 router.patch("/role/delete/:id", settingController.roleDeletePatch);
 
+router.patch("/role/change-multi", settingController.roleChangeMultiPatch);
+
+router.get("/role/trash", settingController.roleTrash);
+
+router.patch("/role/undo/:id", settingController.roleUndoPatch);
+
+router.delete("/role/destroy/:id", settingController.roleDestroyDelete);
+
+router.delete("/role/change-multi", settingController.roleChangeMultiDelete);
+
 module.exports = router;
