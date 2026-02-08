@@ -45,6 +45,28 @@ router.patch(
   settingController.accountAdminDeletePatch,
 );
 
+router.patch(
+  "/account-admin/change-multi",
+  settingController.accountAdminChangeMultiPatch,
+);
+
+router.delete(
+  "/account-admin/change-multi",
+  settingController.accountAdminChangeMultiDelete,
+);
+
+router.get("/account-admin/trash", settingController.accountAdminTrash);
+
+router.patch(
+  "/account-admin/undo/:id",
+  settingController.accountAdminUndoPatch,
+);
+
+router.delete(
+  "/account-admin/destroy/:id",
+  settingController.accountAdminDestroyDelete,
+);
+
 router.get("/role/list", settingController.roleList);
 
 router.get("/role/create", settingController.roleCreate);

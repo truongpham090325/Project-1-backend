@@ -3,6 +3,7 @@ const AccountAdmin = require("../../models/account-admin.model");
 const Role = require("../../models/role.model");
 const SettingWebsiteInfo = require("../../models/setting-webiste.info.model");
 const bcrypt = require("bcryptjs");
+const moment = require("moment");
 
 module.exports.list = (req, res) => {
   res.render("admin/pages/setting-list", {
@@ -62,9 +63,71 @@ module.exports.websiteInfoPost = async (req, res) => {
 };
 
 module.exports.accountAdminList = async (req, res) => {
-  const listAccountAdmin = await AccountAdmin.find({
-    deleted: "false",
+  const find = {
+    deleted: false,
+  };
+
+  // Lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  // Lọc theo trạng thái
+
+  // Lọc theo ngày tạo
+  let filterDate = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).toDate();
+    filterDate.$gte = startDate;
+  }
+
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).toDate();
+    filterDate.$lte = endDate;
+  }
+
+  if (Object.keys(filterDate).length > 0) {
+    find.createdAt = filterDate;
+  }
+  // Hết Lọc theo ngày tạo
+
+  // Lọc theo nhóm quyền
+  if (req.query.role) {
+    find.role = req.query.role;
+  }
+  // Hết Lọc theo nhóm quyền
+
+  // Tìm kiếm tài khoản
+  if (req.query.keyword) {
+    const keyworyRegex = new RegExp(req.query.keyword, "i");
+    find.fullName = keyworyRegex;
+  }
+  // Hết Tìm kiếm tài khoản
+
+  // Phân trang
+  const limitItems = 4;
+  let page = 1;
+  if (req.query.page && parseInt(req.query.page) > 0) {
+    page = parseInt(req.query.page);
+  }
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await AccountAdmin.countDocuments({
+    deleted: false,
   });
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+  };
+  // Hết Phân trang
+
+  // Danh sách nhóm quyền
+  const roleList = await Role.find({
+    deleted: false,
+  });
+  // Hết danh sách nhóm quyền
+
+  const listAccountAdmin = await AccountAdmin.find(find);
 
   for (const item of listAccountAdmin) {
     if (item.role) {
@@ -81,6 +144,8 @@ module.exports.accountAdminList = async (req, res) => {
   res.render("admin/pages/setting-account-admin-list", {
     pageTitle: "Tài khoản quản trị",
     listAccountAdmin: listAccountAdmin,
+    roleList: roleList,
+    pagination: pagination,
   });
 };
 
@@ -241,6 +306,229 @@ module.exports.accountAdminDeletePatch = async (req, res) => {
     res.json({
       code: "error",
       message: "Không thể xóa tài khoản này!",
+    });
+  }
+};
+
+module.exports.accountAdminChangeMultiPatch = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "active":
+      case "inactive":
+      case "initial":
+        await AccountAdmin.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            status: option,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Cập nhập trạng thái thành công!",
+        });
+        break;
+      case "delete":
+        await AccountAdmin.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: true,
+            deletedAt: Date.now(),
+            deletedBy: req.account.id,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Xóa tài khoản thành công!",
+        });
+        break;
+      case "undo":
+        await AccountAdmin.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: false,
+          },
+        );
+        res.json({
+          code: "success",
+          message: "Khôi phục tài khoản thành công!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.accountAdminChangeMultiDelete = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "destroy":
+        await AccountAdmin.deleteMany({
+          _id: { $in: ids },
+        });
+        res.json({
+          code: "success",
+          message: "Đã xóa vĩnh viễn tài khoản!",
+        });
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Hành động không hợp lệ!",
+    });
+  }
+};
+
+module.exports.accountAdminTrash = async (req, res) => {
+  const find = {
+    deleted: true,
+  };
+
+  // Lọc theo trạng thái
+  if (req.query.status) {
+    find.status = req.query.status;
+  }
+  // Lọc theo trạng thái
+
+  // Lọc theo ngày tạo
+  let filterDate = {};
+  if (req.query.startDate) {
+    const startDate = moment(req.query.startDate).toDate();
+    filterDate.$gte = startDate;
+  }
+
+  if (req.query.endDate) {
+    const endDate = moment(req.query.endDate).toDate();
+    filterDate.$lte = endDate;
+  }
+
+  if (Object.keys(filterDate).length > 0) {
+    find.createdAt = filterDate;
+  }
+  // Hết Lọc theo ngày tạo
+
+  // Lọc theo nhóm quyền
+  if (req.query.role) {
+    find.role = req.query.role;
+  }
+  // Hết Lọc theo nhóm quyền
+
+  // Tìm kiếm tài khoản
+  if (req.query.keyword) {
+    const keyworyRegex = new RegExp(req.query.keyword, "i");
+    find.fullName = keyworyRegex;
+  }
+  // Hết Tìm kiếm tài khoản
+
+  // Phân trang
+  const limitItems = 4;
+  let page = 1;
+  if (req.query.page && parseInt(req.query.page) > 0) {
+    page = parseInt(req.query.page);
+  }
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await AccountAdmin.countDocuments({
+    deleted: true,
+  });
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+  };
+  // Hết Phân trang
+
+  // Danh sách nhóm quyền
+  const roleList = await Role.find({
+    deleted: false,
+  });
+  // Hết danh sách nhóm quyền
+
+  const listAccountAdmin = await AccountAdmin.find(find);
+
+  for (const item of listAccountAdmin) {
+    if (item.role) {
+      const roleInfo = await Role.findOne({
+        _id: item.role,
+      });
+
+      if (roleInfo) {
+        item.roleName = roleInfo.name;
+      }
+    }
+  }
+
+  res.render("admin/pages/setting-account-admin-trash", {
+    pageTitle: "Thùng rác Tài khoản quản trị",
+    listAccountAdmin: listAccountAdmin,
+    roleList: roleList,
+    pagination: pagination,
+  });
+};
+
+module.exports.accountAdminUndoPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await AccountAdmin.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục tài khoản thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+module.exports.accountAdminDestroyDelete = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await AccountAdmin.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa tài khoản vĩnh viễn!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
     });
   }
 };
