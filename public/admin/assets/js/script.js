@@ -993,10 +993,28 @@ if (profileEditForm) {
         avatar = avatars[0].file;
       }
 
-      console.log(fullName);
-      console.log(email);
-      console.log(phone);
-      console.log(avatar);
+      // Tạo Form data
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("avatar", avatar);
+
+      fetch(`/${pathAdmin}/profile/edit`, {
+        method: "PATCH",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notify.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
     });
 }
 // End Profile Edit Form

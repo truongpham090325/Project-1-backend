@@ -240,7 +240,7 @@ module.exports.accountAdminDeletePatch = async (req, res) => {
     console.log(error);
     res.json({
       code: "error",
-      message: "Không thể xóa nhóm quyền này!",
+      message: "Không thể xóa tài khoản này!",
     });
   }
 };
