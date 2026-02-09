@@ -196,20 +196,12 @@ block main
         data-aos-duration="800" 
         data-aos="fade-up"
         )
-        // Product Item
-        //- +product-item()
-        // End Product Item
-        // Product Item
-        //- +product-item()
-        // End Product Item
-        // Product Item
-        //- +product-item()
-        // End Product Item
-        // Product Item
-        //- +product-item()
-        // End Product Item
+        each item in tourListSection4
+          // Product Item
+          +product-item(item)
+          // End Product Item
       .inner-button
-        a.button-outline(href="#") Xem tất cả
+        a.button-outline(href=`/category/${categorySection4.slug}`) xem tất cả
   // End Section 4
   // Section 5
   .section-5(
