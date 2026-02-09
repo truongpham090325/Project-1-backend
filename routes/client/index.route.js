@@ -2,6 +2,9 @@ const router = require("express").Router();
 const homeRoutes = require("./home.route");
 const tourRoutes = require("./tour.route");
 const cartRoutes = require("./cart.route");
+const websiteInfoMiddeware = require("../../middlewares/client/website-info.middleware");
+
+router.use(websiteInfoMiddeware.websiteInfo);
 
 router.use("/", homeRoutes);
 router.use("/tours", tourRoutes);
