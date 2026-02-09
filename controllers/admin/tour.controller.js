@@ -1,5 +1,5 @@
 const buildCategoryTree = require("../../helpers/category.helper");
-const Category = require("../../models/category-model");
+const Category = require("../../models/category.model");
 const City = require("../../models/city.model");
 const Tour = require("../../models/tour.model");
 const AccountAdmin = require("../../models/account-admin.model");
