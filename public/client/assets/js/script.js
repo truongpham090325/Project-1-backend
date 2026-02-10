@@ -513,3 +513,25 @@ if (boxPagination) {
   });
 }
 // End Box pagination
+
+// Button sort price asc
+const buttonSortPriceAsc = document.querySelector("[button-sort-price-asc]");
+if (buttonSortPriceAsc) {
+  buttonSortPriceAsc.addEventListener("click", () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("sortPrice", "asc");
+    window.location.href = url.href;
+  });
+}
+// End Button sort price asc
+
+// Button sort price desc
+const buttonSortPriceDesc = document.querySelector("[button-sort-price-desc]");
+if (buttonSortPriceDesc) {
+  buttonSortPriceDesc.addEventListener("click", () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("sortPrice", "desc");
+    window.location.href = url.href;
+  });
+}
+// End Button sort price desc

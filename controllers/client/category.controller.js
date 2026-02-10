@@ -72,11 +72,11 @@ module.exports.list = async (req, res) => {
       deleted: false,
       status: "active",
     })
-      .sort({
-        position: "desc",
-      })
       .limit(limitItems)
-      .skip(skip);
+      .skip(skip)
+      .sort({
+        priceNewAdult: req.query.sortPrice,
+      });
 
     for (const item of tourList) {
       item.discount = Math.floor(
