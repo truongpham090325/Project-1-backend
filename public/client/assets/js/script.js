@@ -436,6 +436,15 @@ if (boxFilter) {
     }
     window.location.href = url.href;
   });
+
+  // Hiển thị lựa chọn mặc định
+  const urlCurrent = new URL(window.location.href);
+  for (const item of filterList) {
+    const valueCurrent = urlCurrent.searchParams.get(item);
+    if (valueCurrent) {
+      boxFilter.querySelector(`[name="${item}"]`).value = valueCurrent;
+    }
+  }
 }
 // End Box Filter
 
