@@ -92,7 +92,7 @@ block main
                   i.fa-solid.fa-eye
             .inner-count-record
               | Tất cả:
-              b 101 Tour
+              b #{tourList.length} Tour
             button.inner-filter-mobile
               span.inner-title Bộ Lọc
               i.fa-solid.fa-filter
@@ -102,14 +102,15 @@ block main
               +product-item(item)
               // End Product Item
           // Pagination
-          .box-pagination
-            button
+          .box-pagination(box-pagination)
+            button(page=pagination.pageCurrent-1)
               i.fa-solid.fa-angles-left
-            button.active 1
-            button 2
-            button 3
-            button 4
-            button
+            - for(let i = 1; i <= pagination.totalPage; i++)
+              button(
+                page=i
+                 class=(i === pagination.pageCurrent ? 'active' : '')
+                ) #{i}
+            button(page=page=pagination.pageCurrent+1)
               i.fa-solid.fa-angles-right
           // End Pagination
   // End Section 9

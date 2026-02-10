@@ -72,10 +72,10 @@ block main
             .inner-sort
               .inner-label Sắp xếp:
               .inner-list
-                button
+                button(button-sort-price-asc)
                   | Giá tăng dần
                   i.fa-solid.fa-square-caret-up
-                button
+                button(button-sort-price-desc)
                   | Giá giảm dần
                   i.fa-solid.fa-square-caret-down
                 button.active
@@ -99,14 +99,15 @@ block main
             else
               div Không tìm thấy kết quả nào.
           // Pagination
-          .box-pagination
-            button
+          .box-pagination(box-pagination)
+            button(page=pagination.pageCurrent-1)
               i.fa-solid.fa-angles-left
-            button.active 1
-            button 2
-            button 3
-            button 4
-            button
+            - for(let i = 1; i <= pagination.totalPage; i++)
+              button(
+                page=i
+                 class=(i === pagination.pageCurrent ? 'active' : '')
+                ) #{i}
+            button(page=page=pagination.pageCurrent+1)
               i.fa-solid.fa-angles-right
           // End Pagination
   // End Section 9

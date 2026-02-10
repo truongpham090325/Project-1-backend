@@ -72,7 +72,22 @@ module.exports.list = async (req, res) => {
     }
     // Hết Mức giá
 
-    const tourList = await Tour.find(find);
+    // Phân trang
+    const limitItems = 6;
+    let page = 1;
+    if (req.query.page && parseInt(req.query.page) > 0) {
+      page = parseInt(req.query.page);
+    }
+    const skip = (page - 1) * limitItems;
+    const totalRecord = await Tour.countDocuments(find);
+    const totalPage = Math.ceil(totalRecord / limitItems);
+    const pagination = {
+      totalPage: totalPage,
+      pageCurrent: page,
+    };
+    // Hết Phân trang
+
+    const tourList = await Tour.find(find).limit(limitItems).skip(skip);
 
     for (const item of tourList) {
       item.discount = Math.floor(
@@ -89,6 +104,7 @@ module.exports.list = async (req, res) => {
       pageTitle: "Kết quả tìm kiếm",
       cityList: cityList,
       tourList: tourList,
+      pagination: pagination,
     });
   } catch (error) {
     console.log(error);

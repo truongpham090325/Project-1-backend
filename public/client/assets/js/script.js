@@ -492,3 +492,24 @@ if (formSearch) {
   });
 }
 // End Form Search
+
+// Box pagination
+const boxPagination = document.querySelector("[box-pagination]");
+if (boxPagination) {
+  const listButton = boxPagination.querySelectorAll("button");
+  listButton.forEach((button) => {
+    button.addEventListener("click", () => {
+      const url = new URL(window.location.href);
+
+      const value = button.getAttribute("page");
+      if (value) {
+        url.searchParams.set("page", value);
+        button.classList.add("active");
+      } else {
+        url.searchParams.delete("page");
+      }
+      window.location.href = url.href;
+    });
+  });
+}
+// End Box pagination
