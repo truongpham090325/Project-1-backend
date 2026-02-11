@@ -65,6 +65,12 @@ module.exports.list = async (req, res) => {
     };
     // Hết Phân trang
 
+    const sort = {};
+
+    if (req.query.sortPrice) {
+      sort.priceNewAdult = req.query.sortPrice;
+    }
+
     const tourList = await Tour.find({
       category: {
         $in: [categoryId, ...categoryChildId],
@@ -74,9 +80,7 @@ module.exports.list = async (req, res) => {
     })
       .limit(limitItems)
       .skip(skip)
-      .sort({
-        priceNewAdult: req.query.sortPrice,
-      });
+      .sort(sort);
 
     for (const item of tourList) {
       item.discount = Math.floor(
