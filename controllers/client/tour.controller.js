@@ -1,5 +1,7 @@
 const Category = require("../../models/category.model");
 const Tour = require("../../models/tour.model");
+const City = require("../../models/city.model");
+const moment = require("moment");
 
 module.exports.list = async (req, res) => {
   const tourList = await Tour.find({});
@@ -50,6 +52,18 @@ module.exports.detail = async (req, res) => {
       slug: tourDetail.slug,
     });
     // End breadcrumb
+
+    if (tourDetail.departureDate) {
+      tourDetail.departureDateFormat = moment(tourDetail.departureDate).format(
+        "DD/MM/YYYY",
+      );
+    }
+
+    if (tourDetail.locations) {
+      tourDetail.locationsDetail = await City.find({
+        _id: { $in: tourDetail.locations },
+      });
+    }
 
     res.render("client/pages/tour-detail", {
       pageTitle: "Chi tiết tour",
