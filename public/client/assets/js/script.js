@@ -194,9 +194,11 @@ if (buttonFilterMobile) {
 const boxTourInfo = document.querySelector(".box-tour-info");
 if (boxTourInfo) {
   const buttonReadMore = boxTourInfo.querySelector(".inner-read-more button");
-  buttonReadMore.addEventListener("click", () => {
-    boxTourInfo.classList.add("active");
-  });
+  if (buttonReadMore) {
+    buttonReadMore.addEventListener("click", () => {
+      boxTourInfo.classList.add("active");
+    });
+  }
 
   new Viewer(boxTourInfo);
 }
@@ -535,3 +537,111 @@ if (buttonSortPriceDesc) {
   });
 }
 // End Button sort price desc
+
+// Initial Cart
+const cart = localStorage.getItem("cart");
+if (!cart) {
+  localStorage.setItem("cart", JSON.stringify([]));
+}
+// End Initial Cart
+
+// Box tour detail
+const boxTourDetail = document.querySelector(".box-tour-detail");
+if (boxTourDetail) {
+  const listInputQuantity = boxTourDetail.querySelectorAll("[input-quantity]");
+  const elementTotalPrice = boxTourDetail.querySelector("[total-price]");
+  const buttonAddCart = boxTourDetail.querySelector("[button-add-cart]");
+  const tourId = buttonAddCart.getAttribute("tour-id");
+
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  const existItem = cart.find((item) => item.tourId == tourId);
+
+  const drawBoxTourDetail = () => {
+    let totalPrice = 0;
+    listInputQuantity.forEach((input) => {
+      let quantity = parseInt(input.value);
+      const feildName = input.getAttribute("input-quantity");
+      const price = parseInt(input.getAttribute("data-price"));
+      const min = parseInt(input.getAttribute("min"));
+      const max = parseInt(input.getAttribute("max"));
+
+      if (quantity < min) {
+        notify.error(`Số lượng phải >= ${min}!`);
+        quantity = min;
+        input.value = min;
+      }
+
+      if (quantity > max) {
+        notify.error(`Số lượng phải <= ${max}!`);
+        quantity = max;
+        input.value = max;
+      }
+
+      const labelQuantity = boxTourDetail.querySelector(
+        `[label-quantity="${feildName}"]`,
+      );
+      labelQuantity.innerHTML = quantity;
+
+      totalPrice += price * quantity;
+    });
+
+    elementTotalPrice.innerHTML = totalPrice.toLocaleString("vi-VN");
+  };
+
+  listInputQuantity.forEach((input) => {
+    input.addEventListener("change", () => {
+      drawBoxTourDetail();
+    });
+
+    if (existItem) {
+      const feildName = input.getAttribute("input-quantity");
+      if (feildName == "stockAdult") {
+        input.value = existItem["quantityAdult"];
+      }
+      if (feildName == "stockChildren") {
+        input.value = existItem["quantityChildren"];
+      }
+      if (feildName == "stockBaby") {
+        input.value = existItem["quantityBaby"];
+      }
+    }
+  });
+
+  buttonAddCart.addEventListener("click", () => {
+    const locationFrom = boxTourDetail.querySelector(
+      `[name="locationFrom"]`,
+    ).value;
+    const quantityAdult = parseInt(
+      boxTourDetail.querySelector(`[input-quantity="stockAdult"]`).value,
+    );
+    const quantityChildren = parseInt(
+      boxTourDetail.querySelector(`[input-quantity="stockChildren"]`).value,
+    );
+    const quantityBaby = parseInt(
+      boxTourDetail.querySelector(`[input-quantity="stockBaby"]`).value,
+    );
+
+    if (quantityAdult > 0 || quantityChildren > 0 || quantityBaby > 0) {
+      const item = {
+        tourId: tourId,
+        locationFrom: locationFrom,
+        quantityAdult: quantityAdult,
+        quantityChildren: quantityChildren,
+        quantityBaby: quantityBaby,
+      };
+
+      const cart = JSON.parse(localStorage.getItem("cart"));
+      const indexItemExist = cart.findIndex((item) => item.tourId == tourId);
+      if (indexItemExist != -1) {
+        cart[indexItemExist] = item;
+      } else {
+        cart.push(item);
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      notify.success("Đã thêm tour vào giỏ hàng!");
+    } else {
+      notify.error("Số lượng phải >= 0!");
+    }
+  });
+}
+// End Box tour detail
