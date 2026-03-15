@@ -2484,6 +2484,12 @@ textarea {
   font-size: 12px;
 }
 
+.section-11 .inner-no-data {
+  color: red;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
 .section-11 .inner-tour-item {
   padding-bottom: 15px;
   border-bottom: 1px solid #f2f2f2;

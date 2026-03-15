@@ -669,15 +669,17 @@ const drawCart = () => {
     .then((data) => {
       if (data.code == "success") {
         let subTotal = 0;
-        const htmlArray = data.cart.map((item) => {
-          subTotal +=
-            item.priceNewAdult * item.quantityAdult +
-            item.priceNewChildren * item.quantityChildren +
-            item.priceNewBaby * item.quantityBaby;
-          return `
+        let htmlArray = [];
+        if (data.cart.length > 0) {
+          htmlArray = data.cart.map((item) => {
+            subTotal +=
+              item.priceNewAdult * item.quantityAdult +
+              item.priceNewChildren * item.quantityChildren +
+              item.priceNewBaby * item.quantityBaby;
+            return `
             <div class="inner-tour-item">
               <div class="inner-actions">
-                <button class="inner-delete">
+                <button class="inner-delete" button-delete tour-id="${item.tourId}">
                   <i class="fa-solid fa-xmark"></i>
                 </button>
                 <input class="inner-check" type="checkbox" />
@@ -769,7 +771,12 @@ const drawCart = () => {
               </div>
             </div>
           `;
-        });
+          });
+        } else {
+          htmlArray = [
+            "<div class='inner-no-data'>Không có tour nào trong giỏ hàng.</div>",
+          ];
+        }
 
         let discount = 0;
         let total = subTotal - discount;
@@ -811,6 +818,18 @@ const drawCart = () => {
               localStorage.setItem("cart", JSON.stringify(cart));
               drawCart();
             }
+          });
+        });
+
+        // Xóa tour
+        const listButtonDelete = document.querySelectorAll("[button-delete]");
+        listButtonDelete.forEach((button) => {
+          button.addEventListener("click", () => {
+            const tourId = button.getAttribute("tour-id");
+            let cart = JSON.parse(localStorage.getItem("cart"));
+            cart = cart.filter((item) => item.tourId != tourId);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            drawCart();
           });
         });
       }
