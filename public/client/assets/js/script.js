@@ -400,7 +400,7 @@ if (orderForm) {
           fullName: fullName,
           phone: phone,
           note: note,
-          method: method,
+          paymentMethod: method,
           items: cart,
         };
         fetch(`/order/create`, {
@@ -417,8 +417,9 @@ if (orderForm) {
             }
 
             if (data.code == "success") {
+              // Cập nhật lại giỏ hàng
               let cart = JSON.parse(localStorage.getItem("cart"));
-              cart.filter((item) => item.checked == false);
+              cart = cart.filter((item) => item.checked == false);
               localStorage.setItem("cart", JSON.stringify(cart));
 
               // Chuyển sang trang đặt hàng thành công
