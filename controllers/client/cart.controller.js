@@ -42,6 +42,7 @@ module.exports.detail = async (req, res) => {
           priceNewChildren: tourInfo.priceNewChildren,
           priceNewBaby: tourInfo.priceNewBaby,
           slug: tourInfo.slug,
+          checked: item.checked,
         });
       }
     }

@@ -639,6 +639,7 @@ if (boxTourDetail) {
         quantityAdult: quantityAdult,
         quantityChildren: quantityChildren,
         quantityBaby: quantityBaby,
+        checked: true,
       };
 
       const cart = JSON.parse(localStorage.getItem("cart"));
@@ -676,17 +677,25 @@ const drawCart = () => {
         let htmlArray = [];
         if (data.cart.length > 0) {
           htmlArray = data.cart.map((item) => {
-            subTotal +=
-              item.priceNewAdult * item.quantityAdult +
-              item.priceNewChildren * item.quantityChildren +
-              item.priceNewBaby * item.quantityBaby;
+            if (item.checked) {
+              subTotal +=
+                item.priceNewAdult * item.quantityAdult +
+                item.priceNewChildren * item.quantityChildren +
+                item.priceNewBaby * item.quantityBaby;
+            }
             return `
             <div class="inner-tour-item">
               <div class="inner-actions">
                 <button class="inner-delete" button-delete tour-id="${item.tourId}">
                   <i class="fa-solid fa-xmark"></i>
                 </button>
-                <input class="inner-check" type="checkbox" />
+                <input
+                  class="inner-check"
+                  type="checkbox"
+                  ${item.checked ? "checked" : ""} 
+                  input-check
+                  tour-id="${item.tourId}" 
+                />
               </div>
               <div class="inner-product">
                 <div class="inner-image">
@@ -835,6 +844,22 @@ const drawCart = () => {
             cart = cart.filter((item) => item.tourId != tourId);
             localStorage.setItem("cart", JSON.stringify(cart));
             drawCart();
+          });
+        });
+
+        // Check tour
+        const listInputCheck = document.querySelectorAll("[input-check]");
+        listInputCheck.forEach((input) => {
+          input.addEventListener("change", () => {
+            const tourId = input.getAttribute("tour-id");
+            const checked = input.checked;
+            const cart = JSON.parse(localStorage.getItem("cart"));
+            const itemUpdate = cart.find((item) => item.tourId == tourId);
+            if (itemUpdate) {
+              itemUpdate["checked"] = checked;
+              localStorage.setItem("cart", JSON.stringify(cart));
+              drawCart();
+            }
           });
         });
       }
