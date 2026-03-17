@@ -8,7 +8,6 @@ const {
   pathAdmin,
 } = require("../../config/variable.config");
 const moment = require("moment");
-const slugify = require("slugify");
 
 module.exports.list = async (req, res) => {
   const find = {
