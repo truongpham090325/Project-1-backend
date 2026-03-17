@@ -139,12 +139,19 @@ block main
                   )
                 label(for="methodMoney") Thanh toán tiền mặt khi đi tour
               .inner-item
-                input#methodMomo(
-                  value="momo" 
+                input#methodZaloPay(
+                  value="zalopay" 
                   name="method" 
                   type="radio"
                   )
-                label(for="methodMomo") Ví MoMo
+                label(for="methodZaloPay") ZaloPay
+              .inner-item
+                input#methodVNPay(
+                  value="vnpay" 
+                  name="method" 
+                  type="radio"
+                  )
+                label(for="methodVNPay") VNPay
               .inner-item
                 input#methodBank(
                   value="bank" 
