@@ -1,90 +1,91 @@
 extends ../layouts/default.pug
 
 block main
-  h1.box-title Thùng rác tour
+  if (permissions.includes("tour-trash"))
+    h1.box-title Thùng rác tour
 
-  //- Section 5
-  .section-5
-    .inner-wrap
-      .inner-change-status(change-multi data-api=`/${pathAdmin}/tour/change-multi`)
-        .inner-item
-          select
-            option(value="") -- Hành động --
-            option(value="undo") Khôi phục
-            option(value="destroy") Xóa vĩnh viễn
-        .inner-item
-          button Áp dụng
-      .inner-search
-        <i class="fa-solid fa-magnifying-glass"></i>
-        input(type="text" placeholder="Tìm kiếm" search)
-      .inner-button-create
-        a(href=`/${pathAdmin}/tour/list`) Quay lại danh sách
-  //- End Section 5
+    //- Section 5
+    .section-5
+      .inner-wrap
+        .inner-change-status(change-multi data-api=`/${pathAdmin}/tour/change-multi`)
+          .inner-item
+            select
+              option(value="") -- Hành động --
+              option(value="undo") Khôi phục
+              option(value="destroy") Xóa vĩnh viễn
+          .inner-item
+            button Áp dụng
+        .inner-search
+          <i class="fa-solid fa-magnifying-glass"></i>
+          input(type="text" placeholder="Tìm kiếm" search)
+        .inner-button-create
+          a(href=`/${pathAdmin}/tour/list`) Quay lại danh sách
+    //- End Section 5
 
-  //- Section 6
-  .section-6
-    .table-2
-      table
-        thead
-          tr
-            th(class="inner-center")
-              input(type="checkbox" class="inner-check" check-all)
-            th Tên tour
-            th Ảnh đại diện
-            th Giá
-            th Còn lại
-            th(class="inner-center") Vị trí
-            th(class="inner-center") Trạng thái
-            th Tạo bởi
-            th Cập nhật bởi
-            th Hành động
-        tbody
-          each item in tourList
+    //- Section 6
+    .section-6
+      .table-2
+        table
+          thead
             tr
-              td(class="inner-center")
-                input(type="checkbox" class="inner-check" check-item=item.id)
-              td #{item.name}
-              td
-                img(src=item.avatar class="inner-avatar")
-              td
-                div NL: #{item.priceNewAdult.toLocaleString("vi-VN")}đ
-                div TE: #{item.priceNewChildren.toLocaleString("vi-VN")}đ
-                div EB: #{item.priceNewBaby.toLocaleString("vi-VN")}đ
-              td
-                div NL: #{item.stockAdult}
-                div TE: #{item.stockChildren}
-                div EB: #{item.stockBaby}
-              td(class="inner-center") #{item.position}
-              if (item.status == "active")
+              th(class="inner-center")
+                input(type="checkbox" class="inner-check" check-all)
+              th Tên tour
+              th Ảnh đại diện
+              th Giá
+              th Còn lại
+              th(class="inner-center") Vị trí
+              th(class="inner-center") Trạng thái
+              th Tạo bởi
+              th Cập nhật bởi
+              th Hành động
+          tbody
+            each item in tourList
+              tr
                 td(class="inner-center")
-                  .badge.badge-green Hoạt động
-              else if (item.status == "inactive")
-                td(class="inner-center")
-                  .badge.badge-red Tạm dừng
-              td
-                div #{item.createdByFullName}
-                div.inner-time #{item.createdAtFormat}
-              td
-                div #{item.updatedByFullName}
-                div.inner-time #{item.updatedAtFormat}
-              td
-                .inner-buttons
-                  button(
-                    class="inner-undo"
-                    button-undo
-                    data-api=`/${pathAdmin}/tour/undo/${item.id}`
-                    ) <i class="fa-solid fa-rotate-left"></i>
-                  button(
-                    class="inner-delete"
-                    button-destroy
-                    data-api = `/${pathAdmin}/tour/destroy/${item.id}`
-                    ) <i class="fa-regular fa-trash-can"></i>
-  //- End Section 6
+                  input(type="checkbox" class="inner-check" check-item=item.id)
+                td #{item.name}
+                td
+                  img(src=item.avatar class="inner-avatar")
+                td
+                  div NL: #{item.priceNewAdult.toLocaleString("vi-VN")}đ
+                  div TE: #{item.priceNewChildren.toLocaleString("vi-VN")}đ
+                  div EB: #{item.priceNewBaby.toLocaleString("vi-VN")}đ
+                td
+                  div NL: #{item.stockAdult}
+                  div TE: #{item.stockChildren}
+                  div EB: #{item.stockBaby}
+                td(class="inner-center") #{item.position}
+                if (item.status == "active")
+                  td(class="inner-center")
+                    .badge.badge-green Hoạt động
+                else if (item.status == "inactive")
+                  td(class="inner-center")
+                    .badge.badge-red Tạm dừng
+                td
+                  div #{item.createdByFullName}
+                  div.inner-time #{item.createdAtFormat}
+                td
+                  div #{item.updatedByFullName}
+                  div.inner-time #{item.updatedAtFormat}
+                td
+                  .inner-buttons
+                    button(
+                      class="inner-undo"
+                      button-undo
+                      data-api=`/${pathAdmin}/tour/undo/${item.id}`
+                      ) <i class="fa-solid fa-rotate-left"></i>
+                    button(
+                      class="inner-delete"
+                      button-destroy
+                      data-api = `/${pathAdmin}/tour/destroy/${item.id}`
+                      ) <i class="fa-regular fa-trash-can"></i>
+    //- End Section 6
 
-  //- Section 7
-  .section-7
-    span(class="inner-label") Hiển thị #{pagination.skip+1} - #{pagination.skip+tourList.length} của #{pagination.totalRecord}
-    select(class="inner-pagination" box-pagination)
-      - for(let i = 1; i <= pagination.totalPage; i++)
-        option(value=i) Trang #{i}
-  //- End Section 7
+    //- Section 7
+    .section-7
+      span(class="inner-label") Hiển thị #{pagination.skip+1} - #{pagination.skip+tourList.length} của #{pagination.totalRecord}
+      select(class="inner-pagination" box-pagination)
+        - for(let i = 1; i <= pagination.totalPage; i++)
+          option(value=i) Trang #{i}
+    //- End Section 7

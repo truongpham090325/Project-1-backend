@@ -167,6 +167,14 @@ module.exports.edit = async (req, res) => {
 
 module.exports.editPatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("order-edit")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
 
     await Order.updateOne(
@@ -299,6 +307,14 @@ module.exports.trash = async (req, res) => {
 
 module.exports.deletePatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("order-edit")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
 
     await Order.updateOne(

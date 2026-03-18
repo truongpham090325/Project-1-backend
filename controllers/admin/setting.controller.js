@@ -162,6 +162,14 @@ module.exports.accountAdminCreate = async (req, res) => {
 
 module.exports.accountAdminCreatePost = async (req, res) => {
   try {
+    if (!req.permissions.includes("account-admin-create")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const existEmail = await AccountAdmin.findOne({
       email: req.body.email,
     });
@@ -232,6 +240,14 @@ module.exports.accountAdminEdit = async (req, res) => {
 
 module.exports.accountAdminEditPatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("account-admin-edit")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
 
     const existEmail = await AccountAdmin.findOne({
@@ -286,6 +302,14 @@ module.exports.accountAdminEditPatch = async (req, res) => {
 
 module.exports.accountAdminDeletePatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("account-admin-delete")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
 
     await AccountAdmin.updateOne(
@@ -332,6 +356,14 @@ module.exports.accountAdminChangeMultiPatch = async (req, res) => {
         });
         break;
       case "delete":
+        if (!req.permissions.includes("account-admin-delete")) {
+          res.json({
+            code: "error",
+            message: "Không có quyền!",
+          });
+          return;
+        }
+
         await AccountAdmin.updateMany(
           {
             _id: { $in: ids },
@@ -564,6 +596,14 @@ module.exports.roleCreate = (req, res) => {
 
 module.exports.roleCreatePost = async (req, res) => {
   try {
+    if (!req.permissions.includes("role-create")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     req.body.permissions = req.body.permissions
       ? JSON.parse(req.body.permissions)
       : [];
@@ -612,6 +652,14 @@ module.exports.roleEdit = async (req, res) => {
 
 module.exports.roleEditPatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("role-edit")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
     req.body.permissions = req.body.permissions
       ? JSON.parse(req.body.permissions)
@@ -641,6 +689,14 @@ module.exports.roleEditPatch = async (req, res) => {
 
 module.exports.roleDeletePatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("role-delete")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
 
     await Role.updateOne(
@@ -671,6 +727,14 @@ module.exports.roleChangeMultiPatch = async (req, res) => {
 
     switch (option) {
       case "delete":
+        if (!req.permissions.includes("role-delete")) {
+          res.json({
+            code: "error",
+            message: "Không có quyền!",
+          });
+          return;
+        }
+
         await Role.updateMany(
           {
             _id: { $in: ids },

@@ -66,6 +66,14 @@ module.exports.changeMultiPatch = async (req, res) => {
 
     switch (option) {
       case "delete":
+        if (!req.permissions.includes("contact-delete")) {
+          res.json({
+            code: "error",
+            message: "Không có quyền!",
+          });
+          return;
+        }
+
         await Contact.updateMany(
           {
             _id: { $in: ids },
@@ -138,6 +146,14 @@ module.exports.changeMultiDelete = async (req, res) => {
 
 module.exports.deletePatch = async (req, res) => {
   try {
+    if (!req.permissions.includes("contact-delete")) {
+      res.json({
+        code: "error",
+        message: "Không có quyền!",
+      });
+      return;
+    }
+
     const id = req.params.id;
 
     await Contact.updateOne(
