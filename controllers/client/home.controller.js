@@ -27,7 +27,7 @@ module.exports.home = async (req, res) => {
   // End section 2
 
   // Section 4
-  const categoryIdSection4 = "69894053545bd170bac67b46";
+  const categoryIdSection4 = "69bb525742c6fcc7501faf1a";
   const categoryChildSection4 =
     await categoryHelper.getCategoryChild(categoryIdSection4);
   const categoryChildIdSection4 = categoryChildSection4.map((item) => item.id);
@@ -67,7 +67,7 @@ module.exports.home = async (req, res) => {
   // End Section 4
 
   // Section 6
-  const categoryIdSection6 = "6989406c545bd170bac67b4f";
+  const categoryIdSection6 = "69bb526342c6fcc7501faf24";
   const categoryChildSection6 =
     await categoryHelper.getCategoryChild(categoryIdSection6);
   const categoryChildIdSection6 = categoryChildSection6.map((item) => item.id);
